@@ -1,343 +1,269 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Habit Tracker</title>
-<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg: #f5f5f3; --surface: #ffffff; --surface2: #fafaf9;
-    --text: #0b0b0b; --text2: #52514e; --muted: #898781;
-    --border: rgba(11,11,11,0.12); --border-strong: rgba(11,11,11,0.2);
-    --accent: #2a78d6; --accent-bg: #e6f1fb; --accent-text: #185fa5;
-    --success: #1baf7a; --success-bg: #e1f5ee; --success-text: #0f6e56;
-    --danger: #e34948; --danger-bg: #fcebeb; --danger-text: #a32d2d;
-    --radius: 8px;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f3;--surface:#fff;--surface2:#fafaf9;
+  --text:#0b0b0b;--text2:#52514e;--muted:#898781;
+  --border:rgba(11,11,11,0.12);--bstrong:rgba(11,11,11,0.22);
+  --acc:#2a78d6;--acc-bg:#e6f1fb;--acc-text:#185fa5;
+  --suc:#1baf7a;--suc-bg:#e1f5ee;--suc-text:#0f6e56;
+  --dan:#e34948;--dan-bg:#fcebeb;--dan-text:#a32d2d;
+  --r:8px;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#141413;--surface:#1e1e1c;--surface2:#242422;
+    --text:#f0efe8;--text2:#b0afa6;--muted:#6a6a65;
+    --border:rgba(255,255,255,0.1);--bstrong:rgba(255,255,255,0.2);
+    --acc:#3987e5;--acc-bg:#0c2a50;--acc-text:#85b7eb;
+    --suc:#199e70;--suc-bg:#052f22;--suc-text:#5dcaa5;
+    --dan:#e66767;--dan-bg:#3a1010;--dan-text:#f09595;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #141413; --surface: #1e1e1c; --surface2: #242422;
-      --text: #f0efe8; --text2: #b0afa6; --muted: #6a6a65;
-      --border: rgba(255,255,255,0.1); --border-strong: rgba(255,255,255,0.18);
-      --accent: #3987e5; --accent-bg: #0c2a50; --accent-text: #85b7eb;
-      --success: #199e70; --success-bg: #052f22; --success-text: #5dcaa5;
-      --danger: #e66767; --danger-bg: #3a1010; --danger-text: #f09595;
-    }
-  }
-  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; min-height: 100vh; }
-  input, select { background: var(--surface); color: var(--text); border: 0.5px solid var(--border-strong); border-radius: var(--radius); padding: 8px 10px; font-size: 14px; width: 100%; outline: none; }
-  input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
-  button { background: transparent; border: 0.5px solid var(--border-strong); color: var(--text); border-radius: var(--radius); padding: 7px 14px; font-size: 14px; cursor: pointer; font-family: inherit; transition: background 0.15s; }
-  button:hover { background: var(--surface2); }
-  * { scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent; }
+}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
+#app{max-width:640px;margin:0 auto;padding:1.5rem 1rem}
+h1{font-size:22px;font-weight:500;margin-bottom:4px}
+.sub{color:var(--text2);font-size:14px;margin-bottom:1.25rem}
+input,select{background:var(--surface);color:var(--text);border:0.5px solid var(--bstrong);border-radius:var(--r);padding:8px 10px;font-size:14px;width:100%;outline:none;font-family:inherit}
+input:focus,select:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-bg)}
+button{background:transparent;border:0.5px solid var(--bstrong);color:var(--text);border-radius:var(--r);padding:7px 14px;font-size:14px;cursor:pointer;font-family:inherit;transition:background 0.15s}
+button:hover{background:var(--surface2)}
+.tabs{display:flex;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap;align-items:center}
+.tab{padding:6px 14px;border-radius:99px;border:0.5px solid var(--border);color:var(--text2);font-size:14px;cursor:pointer;background:transparent;font-family:inherit}
+.tab.active{background:var(--acc-bg);color:var(--acc-text);border-color:var(--acc);font-weight:500}
+.btn-add{margin-left:auto;padding:6px 16px;border-radius:99px;border:0.5px solid var(--acc);background:var(--acc-bg);color:var(--acc-text);font-weight:500;font-size:14px;cursor:pointer;font-family:inherit}
+.progress-box{background:var(--surface);border-radius:12px;border:0.5px solid var(--border);padding:1rem 1.25rem;margin-bottom:1rem}
+.prog-header{display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;color:var(--text2)}
+.prog-header span:last-child{font-weight:500;color:var(--text)}
+.prog-track{height:8px;border-radius:4px;background:var(--bstrong);overflow:hidden}
+.prog-fill{height:100%;border-radius:4px;transition:width 0.4s ease}
+.prog-label{font-size:12px;color:var(--muted);margin-top:5px}
+.card{background:var(--surface);border-radius:12px;border:0.5px solid var(--border);padding:0.875rem 1.1rem;margin-bottom:10px}
+.habit-row{display:flex;align-items:center;gap:12px}
+.check-btn{width:30px;height:30px;border-radius:50%;flex-shrink:0;border-width:2px;border-style:solid;background:transparent;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;color:#fff;transition:all 0.2s;padding:0}
+.habit-name{font-weight:500;font-size:15px}
+.habit-name.done{text-decoration:line-through;color:var(--muted)}
+.badge{font-size:11px;padding:2px 8px;border-radius:99px;font-weight:500;display:inline-block}
+.habit-meta{display:flex;gap:10px;margin-top:3px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.habit-time{font-size:11px;color:var(--muted);white-space:nowrap;margin-left:auto}
+.week-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px}
+.week-grid{display:flex;gap:5px}
+.week-day{flex:1;text-align:center}
+.week-label{font-size:11px;margin-bottom:4px}
+.week-cell{height:32px;border-radius:6px;border:0.5px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted)}
+.week-cell.done{color:#fff;border-color:transparent}
+.manage-row{display:flex;align-items:center;gap:12px}
+.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.manage-info{flex:1}
+.manage-name{font-weight:500;font-size:15px}
+.manage-meta{font-size:12px;color:var(--muted);margin-top:2px}
+.btn-remove{border:0.5px solid var(--dan);color:var(--dan-text);border-radius:var(--r);padding:5px 12px;font-size:12px;background:transparent;cursor:pointer;font-family:inherit}
+.empty{text-align:center;padding:3rem 1rem;color:var(--muted)}
+.empty-icon{font-size:48px;margin-bottom:12px}
+.empty-title{font-size:16px;font-weight:500;color:var(--text2);margin-bottom:6px}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:100;padding:1rem}
+.modal{background:var(--surface);border-radius:16px;border:0.5px solid var(--border);padding:1.5rem;width:360px;max-width:100%}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.modal-title{font-size:18px;font-weight:500}
+.modal-close{background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer;padding:0 4px;line-height:1}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+label{font-size:13px;color:var(--text2)}
+.btn-row{display:flex;gap:8px;margin-top:4px}
+.btn-row button{flex:1}
+.btn-primary{background:var(--acc-bg);color:var(--acc-text);border-color:var(--acc);font-weight:500}
+.btn-success{background:var(--suc-bg);color:var(--suc-text);border-color:var(--suc);font-weight:500}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--surface);border:0.5px solid var(--border);border-radius:99px;padding:10px 22px;font-size:14px;font-weight:500;color:var(--text);box-shadow:0 4px 20px rgba(0,0,0,0.15);white-space:nowrap;z-index:200;transition:opacity 0.3s}
+.toast.hide{opacity:0}
 </style>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel">
-const { useState, useEffect, useCallback } = React;
-
-const CATEGORIES = [
-  { name:"Health",      color:"#1baf7a", bg:"#e1f5ee", darkBg:"#052f22" },
-  { name:"Learning",    color:"#2a78d6", bg:"#e6f1fb", darkBg:"#0c2a50" },
-  { name:"Mindfulness", color:"#9085e9", bg:"#eeedfe", darkBg:"#1a1540" },
-  { name:"Work",        color:"#eda100", bg:"#faeeda", darkBg:"#3a2800" },
-  { name:"Fitness",     color:"#e34948", bg:"#fcebeb", darkBg:"#3a1010" },
-  { name:"Other",       color:"#888780", bg:"#f1efe8", darkBg:"#2a2a28" },
+<div id="app"></div>
+<script>
+const CATS=[
+  {name:"Health",color:"#1baf7a",bg:"#e1f5ee",dbg:"#052f22"},
+  {name:"Learning",color:"#2a78d6",bg:"#e6f1fb",dbg:"#0c2a50"},
+  {name:"Mindfulness",color:"#9085e9",bg:"#eeedfe",dbg:"#1a1540"},
+  {name:"Work",color:"#eda100",bg:"#faeeda",dbg:"#3a2800"},
+  {name:"Fitness",color:"#e34948",bg:"#fcebeb",dbg:"#3a1010"},
+  {name:"Other",color:"#888780",bg:"#f1efe8",dbg:"#2a2a28"},
 ];
+const MOTIV=["You crushed it today! 🎉","All habits done — you're on fire!","Perfect day. Keep the momentum!","Consistency is your superpower!","Today = 100%. You're unstoppable! 🔥"];
+const catFor=n=>CATS.find(c=>c.name===n)||CATS[5];
+const isDark=()=>window.matchMedia("(prefers-color-scheme:dark)").matches;
+const today=()=>new Date().toISOString().split("T")[0];
+const weekDays=()=>{const d=[];for(let i=6;i>=0;i--){const x=new Date();x.setDate(x.getDate()-i);d.push(x.toISOString().split("T")[0]);}return d;};
+const el=(tag,attrs={},children=[])=>{const e=document.createElement(tag);Object.entries(attrs).forEach(([k,v])=>{if(k==="class")e.className=v;else if(k==="style"&&typeof v==="object")Object.assign(e.style,v);else if(k.startsWith("on"))e.addEventListener(k.slice(2).toLowerCase(),v);else e.setAttribute(k,v);});(Array.isArray(children)?children:[children]).forEach(c=>{if(c==null)return;e.appendChild(typeof c==="string"?document.createTextNode(c):c);});return e;};
 
-const MOTIVATIONAL = [
-  "You crushed it today! 🎉", "All habits done — you're on fire!",
-  "Perfect day. Keep the momentum!", "Consistency is your superpower!",
-  "Today = 100%. You're unstoppable!", "Nothing can stop you now! 🔥"
-];
+let habits=[],logs={};
+try{const h=localStorage.getItem("ht2_habits");const l=localStorage.getItem("ht2_logs");if(h)habits=JSON.parse(h);if(l)logs=JSON.parse(l);}catch{}
+const persist=()=>{try{localStorage.setItem("ht2_habits",JSON.stringify(habits));localStorage.setItem("ht2_logs",JSON.stringify(logs));}catch{}};
 
-const today = () => new Date().toISOString().split("T")[0];
-const weekDays = () => {
-  const days = [];
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(); d.setDate(d.getDate() - i);
-    days.push(d.toISOString().split("T")[0]);
+let currentView="today";
+let toastTimer=null;
+
+function showToast(msg){
+  let t=document.getElementById("toast");
+  if(!t){t=document.createElement("div");t.id="toast";t.className="toast";document.body.appendChild(t);}
+  t.textContent=msg;t.classList.remove("hide");
+  if(toastTimer)clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.add("hide"),3000);
+}
+
+function streak(habit){
+  let c=0,d=new Date();
+  while(true){const k=`${habit.id}_${d.toISOString().split("T")[0]}`;if(!logs[k])break;c++;d.setDate(d.getDate()-1);}
+  return c;
+}
+
+function openModal(content){
+  const overlay=el("div",{class:"overlay"});
+  const close=()=>overlay.remove();
+  overlay.addEventListener("click",e=>{if(e.target===overlay)close();});
+  overlay.appendChild(content(close));
+  document.body.appendChild(overlay);
+}
+
+function addHabitModal(){
+  openModal(close=>{
+    const modal=el("div",{class:"modal"});
+    const nameI=el("input",{type:"text",placeholder:"e.g. Morning run"});
+    const catS=el("select",{},[...CATS.map(c=>el("option",{value:c.name},c.name))]);
+    const freqS=el("select",{},[el("option",{value:"daily"},"Daily"),el("option",{value:"weekly"},"Weekly")]);
+    const remI=el("input",{type:"time"});
+    const doAdd=()=>{
+      if(!nameI.value.trim())return;
+      habits.push({id:Date.now(),name:nameI.value.trim(),category:catS.value,frequency:freqS.value,reminder:remI.value,createdAt:today()});
+      persist();
+      if(remI.value&&"Notification" in window)Notification.requestPermission().then(p=>{if(p==="granted")showToast(`Reminder set for ${nameI.value} at ${remI.value}`);});
+      close();render();showToast("Habit added!");
+    };
+    nameI.addEventListener("keydown",e=>{if(e.key==="Enter")doAdd();});
+    modal.appendChild(el("div",{class:"modal-header"},[el("span",{class:"modal-title"},"Add a new habit"),el("button",{class:"modal-close",onClick:close},"✕")]));
+    [[nameI,"Habit name"],[catS,"Category"],[freqS,"Frequency"],[remI,"Reminder time (optional)"]].forEach(([inp,lbl])=>{modal.appendChild(el("div",{class:"field"},[el("label",{},lbl),inp]));});
+    modal.appendChild(el("div",{class:"btn-row"},[el("button",{onClick:close},"Cancel"),el("button",{class:"btn-primary",onClick:doAdd},"Add habit")]));
+    return modal;
+  });
+}
+
+function logModal(habit){
+  openModal(close=>{
+    const modal=el("div",{class:"modal"});
+    const noteI=el("input",{type:"text",placeholder:"e.g. Ran 5km, felt great!"});
+    const doLog=()=>{
+      const t=today(),key=`${habit.id}_${t}`;
+      logs[key]={done:true,note:noteI.value,time:new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})};
+      persist();
+      const daily=habits.filter(h=>h.frequency==="daily");
+      if(daily.every(h=>logs[`${h.id}_${t}`]))showToast(MOTIV[Math.floor(Math.random()*MOTIV.length)]);
+      close();render();
+    };
+    noteI.addEventListener("keydown",e=>{if(e.key==="Enter")doLog();});
+    modal.appendChild(el("div",{class:"modal-header"},[el("span",{class:"modal-title"},`Log: ${habit.name}`),el("button",{class:"modal-close",onClick:close},"✕")]));
+    modal.appendChild(el("div",{class:"field"},[el("label",{},"Add a quick note (optional)"),noteI]));
+    modal.appendChild(el("div",{class:"btn-row"},[el("button",{onClick:close},"Skip"),el("button",{class:"btn-success",onClick:doLog},"Mark done ✓")]));
+    return modal;
+  });
+}
+
+function renderToday(){
+  const t=today();
+  return habits.map(habit=>{
+    const done=!!logs[`${habit.id}_${t}`];
+    const cat=catFor(habit.category);
+    const bg=isDark()?cat.dbg:cat.bg;
+    const s=streak(habit);
+    const chk=el("button",{class:"check-btn",style:{borderColor:done?cat.color:"",backgroundColor:done?cat.color:""},onClick:()=>{
+      if(done){delete logs[`${habit.id}_${t}`];persist();render();}else logModal(habit);
+    }},done?["✓"]:[]);
+    chk.style.borderColor=done?cat.color:"";
+    const meta=[];
+    if(s>0)meta.push(el("span",{},`🔥 ${s}-day streak`));
+    if(habit.reminder)meta.push(el("span",{},`⏰ ${habit.reminder}`));
+    if(logs[`${habit.id}_${t}`]?.note)meta.push(el("span",{},`📝 ${logs[`${habit.id}_${t}`].note}`));
+    const nameEl=el("span",{class:`habit-name${done?" done":""}`},habit.name);
+    const badge=el("span",{class:"badge",style:{background:bg,color:cat.color}},habit.category);
+    const timeEl=el("span",{class:"habit-time"},done?(logs[`${habit.id}_${t}`]?.time||""):habit.frequency);
+    const row=el("div",{class:"habit-row"},[chk,el("div",{style:{flex:"1"}},[el("div",{style:{display:"flex",alignItems:"center",gap:"8px",flexWrap:"wrap"}},[nameEl,badge]),el("div",{class:"habit-meta"},meta)]),timeEl]);
+    return el("div",{class:"card"},[row]);
+  });
+}
+
+function renderWeek(){
+  const days=weekDays();
+  return habits.map(habit=>{
+    const cat=catFor(habit.category);
+    const bg=isDark()?cat.dbg:cat.bg;
+    const wp=days.map(d=>({date:d,done:!!logs[`${habit.id}_${d}`]}));
+    const weekDone=wp.filter(x=>x.done).length;
+    const s=streak(habit);
+    const badge=el("span",{class:"badge",style:{background:bg,color:cat.color}},habit.category);
+    const grid=el("div",{class:"week-grid"},wp.map(({date,done})=>{
+      const lbl=new Date(date+"T12:00:00").toLocaleDateString("en-AU",{weekday:"short"}).slice(0,1);
+      const isToday=date===today();
+      const cell=el("div",{class:`week-cell${done?" done":""}`},done?"✓":"–");
+      if(done)cell.style.background=cat.color;
+      const dayEl=el("div",{class:"week-day"},[el("div",{class:"week-label",style:{color:isToday?"var(--acc)":"var(--muted)",fontWeight:isToday?"500":"400"}},lbl),cell]);
+      return dayEl;
+    }));
+    const streakEl=s>0?[el("div",{style:{marginTop:"8px",fontSize:"12px",color:"var(--muted)"}},`🔥 ${s}-day streak`)]:[]; 
+    const header=el("div",{class:"week-header"},[el("div",{style:{display:"flex",alignItems:"center",gap:"8px",flexWrap:"wrap"}},[el("span",{style:{fontWeight:"500",fontSize:"15px"}},habit.name),badge]),el("span",{style:{fontSize:"13px",color:"var(--text2)"}},`${weekDone}/7 days`)]);
+    return el("div",{class:"card"},[header,grid,...streakEl]);
+  });
+}
+
+function renderManage(){
+  return habits.map(habit=>{
+    const cat=catFor(habit.category);
+    const meta=[habit.category,habit.frequency,habit.reminder?`⏰ ${habit.reminder}`:""].filter(Boolean).join(" · ");
+    const del=el("button",{class:"btn-remove",onClick:()=>{habits=habits.filter(h=>h.id!==habit.id);persist();render();showToast("Habit removed.");}});
+    del.textContent="Remove";
+    return el("div",{class:"card"},[el("div",{class:"manage-row"},[el("div",{class:"dot",style:{background:cat.color}}),el("div",{class:"manage-info"},[el("div",{class:"manage-name"},habit.name),el("div",{class:"manage-meta"},meta)]),del])]);
+  });
+}
+
+function render(){
+  const app=document.getElementById("app");
+  app.innerHTML="";
+  app.appendChild(el("h1",{},"Habit tracker"));
+  app.appendChild(el("p",{class:"sub"},new Date().toLocaleDateString("en-AU",{weekday:"long",day:"numeric",month:"long"})));
+
+  const daily=habits.filter(h=>h.frequency==="daily");
+  const t=today();
+  const done=daily.filter(h=>logs[`${h.id}_${t}`]).length;
+  const total=daily.length;
+  const pct=total>0?Math.round((done/total)*100):0;
+
+  if(total>0){
+    const fill=el("div",{class:"prog-fill",style:{width:`${pct}%`,background:pct===100?"var(--suc)":"var(--acc)"}});
+    const box=el("div",{class:"progress-box"},[el("div",{class:"prog-header"},[el("span",{},"Today's progress"),el("span",{},`${done}/${total}`)]),el("div",{class:"prog-track"},[fill]),el("div",{class:"prog-label"},`${pct}% complete`)]);
+    app.appendChild(box);
   }
-  return days;
-};
 
-const catFor = n => CATEGORIES.find(c => c.name === n) || CATEGORIES[5];
-const isDark = () => window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const tabs=["today","week","manage"].map(v=>{
+    const b=el("button",{class:`tab${currentView===v?" active":""}`,onClick:()=>{currentView=v;render();}},v.charAt(0).toUpperCase()+v.slice(1));
+    return b;
+  });
+  const addBtn=el("button",{class:"btn-add",onClick:addHabitModal},"+ Add habit");
+  app.appendChild(el("div",{class:"tabs"},[...tabs,addBtn]));
 
-function Modal({ title, onClose, children }) {
-  return (
-    <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.4)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:100, padding:"1rem" }}>
-      <div style={{ background:"var(--surface)", borderRadius:16, border:"0.5px solid var(--border)", padding:"1.5rem", width:360, maxWidth:"100%" }}>
-        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"1rem" }}>
-          <h2 style={{ fontSize:18, fontWeight:500 }}>{title}</h2>
-          <button onClick={onClose} style={{ border:"none", background:"none", fontSize:20, color:"var(--muted)", padding:"0 4px" }}>✕</button>
-        </div>
-        {children}
-      </div>
-    </div>
-  );
+  if(habits.length===0){
+    app.appendChild(el("div",{class:"empty"},[el("div",{class:"empty-icon"},"🌱"),el("div",{class:"empty-title"},"No habits yet"),el("p",{},"Add your first habit to get started.")]));
+    return;
+  }
+
+  let cards=[];
+  if(currentView==="today")cards=renderToday();
+  else if(currentView==="week")cards=renderWeek();
+  else cards=renderManage();
+  cards.forEach(c=>app.appendChild(c));
 }
 
-function App() {
-  const [habits, setHabits] = useState([]);
-  const [logs, setLogs]     = useState({});
-  const [view, setView]     = useState("today");
-  const [showAdd, setShowAdd] = useState(false);
-  const [showLog, setShowLog] = useState(null);
-  const [noteInput, setNoteInput] = useState("");
-  const [form, setForm] = useState({ name:"", category:"Health", frequency:"daily", reminder:"" });
-  const [toast, setToast] = useState("");
-
-  useEffect(() => {
-    try {
-      const h = localStorage.getItem("ht_habits");
-      const l = localStorage.getItem("ht_logs");
-      if (h) setHabits(JSON.parse(h));
-      if (l) setLogs(JSON.parse(l));
-    } catch {}
-  }, []);
-
-  const persist = (h, l) => {
-    try {
-      localStorage.setItem("ht_habits", JSON.stringify(h));
-      localStorage.setItem("ht_logs", JSON.stringify(l));
-    } catch {}
-  };
-
-  const showToast = msg => { setToast(msg); setTimeout(() => setToast(""), 3200); };
-
-  const addHabit = () => {
-    if (!form.name.trim()) return;
-    const h = [...habits, { id:Date.now(), ...form, createdAt:today() }];
-    setHabits(h); persist(h, logs);
-    setShowAdd(false);
-    setForm({ name:"", category:"Health", frequency:"daily", reminder:"" });
-    if (form.reminder) {
-      if ("Notification" in window) {
-        Notification.requestPermission().then(p => {
-          if (p === "granted") showToast(`Reminder set for ${form.name} at ${form.reminder}`);
-          else showToast("Habit added! Enable notifications for reminders.");
-        });
-      }
-    } else showToast("Habit added!");
-  };
-
-  const deleteHabit = id => {
-    const h = habits.filter(x => x.id !== id);
-    setHabits(h); persist(h, logs);
-    showToast("Habit removed.");
-  };
-
-  const toggleLog = (habitId, date, note = "") => {
-    const key = `${habitId}_${date}`;
-    const l = { ...logs };
-    if (l[key]) delete l[key];
-    else l[key] = { done:true, note, time:new Date().toLocaleTimeString([], { hour:"2-digit", minute:"2-digit" }) };
-    setLogs(l); persist(habits, l);
-    const allDone = habits.filter(h => h.frequency === "daily").every(h => l[`${h.id}_${date}`]);
-    if (allDone && habits.length > 0) showToast(MOTIVATIONAL[Math.floor(Math.random() * MOTIVATIONAL.length)]);
-  };
-
-  const streak = habit => {
-    let c = 0, d = new Date();
-    while (true) {
-      const k = `${habit.id}_${d.toISOString().split("T")[0]}`;
-      if (!logs[k]) break;
-      c++; d.setDate(d.getDate() - 1);
-    }
-    return c;
-  };
-
-  const weekProgress = habit => weekDays().map(d => ({ date:d, done:!!logs[`${habit.id}_${d}`] }));
-
-  const { done, total } = (() => {
-    const t = today(), daily = habits.filter(h => h.frequency === "daily");
-    return { done:daily.filter(h => logs[`${h.id}_${t}`]).length, total:daily.length };
-  })();
-  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
-
-  return (
-    <div style={{ maxWidth:640, margin:"0 auto", padding:"1.5rem 1rem" }}>
-      <h1 style={{ fontSize:22, fontWeight:500, marginBottom:4 }}>Habit tracker</h1>
-      <p style={{ color:"var(--text2)", fontSize:14, marginBottom:"1.25rem" }}>
-        {new Date().toLocaleDateString("en-AU", { weekday:"long", day:"numeric", month:"long" })}
-      </p>
-
-      {total > 0 && (
-        <div style={{ background:"var(--surface)", borderRadius:12, border:"0.5px solid var(--border)", padding:"1rem 1.25rem", marginBottom:"1rem" }}>
-          <div style={{ display:"flex", justifyContent:"space-between", marginBottom:8 }}>
-            <span style={{ fontSize:14, color:"var(--text2)" }}>Today's progress</span>
-            <span style={{ fontWeight:500, fontSize:14 }}>{done}/{total}</span>
-          </div>
-          <div style={{ height:8, borderRadius:4, background:"var(--border-strong)", overflow:"hidden" }}>
-            <div style={{ height:"100%", width:`${pct}%`, background: pct===100 ? "var(--success)" : "var(--accent)", borderRadius:4, transition:"width 0.4s ease" }} />
-          </div>
-          <div style={{ fontSize:12, color:"var(--muted)", marginTop:5 }}>{pct}% complete</div>
-        </div>
-      )}
-
-      <div style={{ display:"flex", gap:8, marginBottom:"1.25rem", flexWrap:"wrap" }}>
-        {["today","week","manage"].map(v => (
-          <button key={v} onClick={() => setView(v)} style={{
-            padding:"6px 14px", borderRadius:99,
-            border: `0.5px solid ${view===v ? "var(--accent)" : "var(--border)"}`,
-            background: view===v ? "var(--accent-bg)" : "transparent",
-            color: view===v ? "var(--accent-text)" : "var(--text2)",
-            fontWeight: view===v ? 500 : 400
-          }}>{v.charAt(0).toUpperCase()+v.slice(1)}</button>
-        ))}
-        <button onClick={() => setShowAdd(true)} style={{ marginLeft:"auto", padding:"6px 16px", borderRadius:99, border:"0.5px solid var(--accent)", background:"var(--accent-bg)", color:"var(--accent-text)", fontWeight:500 }}>
-          + Add habit
-        </button>
-      </div>
-
-      {habits.length === 0 && (
-        <div style={{ textAlign:"center", padding:"3rem 1rem", color:"var(--muted)" }}>
-          <div style={{ fontSize:48, marginBottom:12 }}>🌱</div>
-          <div style={{ fontSize:16, fontWeight:500, marginBottom:6, color:"var(--text2)" }}>No habits yet</div>
-          <div style={{ fontSize:14 }}>Add your first habit to get started.</div>
-        </div>
-      )}
-
-      {view === "today" && habits.map(habit => {
-        const t = today(), done = !!logs[`${habit.id}_${t}`];
-        const cat = catFor(habit.category);
-        const s = streak(habit);
-        const bg = isDark() ? cat.darkBg : cat.bg;
-        return (
-          <div key={habit.id} style={{ background:"var(--surface)", borderRadius:12, border:"0.5px solid var(--border)", padding:"0.875rem 1.1rem", marginBottom:10, display:"flex", alignItems:"center", gap:12 }}>
-            <button onClick={() => { if (!done) { setShowLog(habit); } else { toggleLog(habit.id, t); } }} style={{
-              width:30, height:30, borderRadius:"50%", flexShrink:0,
-              border:`2px solid ${done ? cat.color : "var(--border-strong)"}`,
-              background: done ? cat.color : "transparent",
-              color:"#fff", fontSize:15, display:"flex", alignItems:"center", justifyContent:"center",
-              transition:"all 0.2s", padding:0
-            }}>{done ? "✓" : ""}</button>
-            <div style={{ flex:1 }}>
-              <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
-                <span style={{ fontWeight:500, fontSize:15, color: done ? "var(--muted)" : "var(--text)", textDecoration: done ? "line-through" : "none" }}>{habit.name}</span>
-                <span style={{ fontSize:11, padding:"2px 8px", borderRadius:99, background:bg, color:cat.color, fontWeight:500 }}>{habit.category}</span>
-              </div>
-              <div style={{ display:"flex", gap:10, marginTop:3, fontSize:12, color:"var(--muted)", flexWrap:"wrap" }}>
-                {s > 0 && <span>🔥 {s}-day streak</span>}
-                {habit.reminder && <span>⏰ {habit.reminder}</span>}
-                {logs[`${habit.id}_${t}`]?.note && <span>📝 {logs[`${habit.id}_${t}`].note}</span>}
-              </div>
-            </div>
-            <span style={{ fontSize:11, color:"var(--muted)", whiteSpace:"nowrap" }}>{done ? logs[`${habit.id}_${t}`]?.time : habit.frequency}</span>
-          </div>
-        );
-      })}
-
-      {view === "week" && habits.map(habit => {
-        const cat = catFor(habit.category);
-        const wp = weekProgress(habit);
-        return (
-          <div key={habit.id} style={{ background:"var(--surface)", borderRadius:12, border:"0.5px solid var(--border)", padding:"1rem 1.1rem", marginBottom:10 }}>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
-              <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-                <span style={{ fontWeight:500, fontSize:15 }}>{habit.name}</span>
-                <span style={{ fontSize:11, padding:"2px 8px", borderRadius:99, background: isDark() ? cat.darkBg : cat.bg, color:cat.color, fontWeight:500 }}>{habit.category}</span>
-              </div>
-              <span style={{ fontSize:13, color:"var(--text2)" }}>{wp.filter(d=>d.done).length}/7</span>
-            </div>
-            <div style={{ display:"flex", gap:5 }}>
-              {wp.map(({ date, done }) => {
-                const lbl = new Date(date+"T12:00:00").toLocaleDateString("en-AU", { weekday:"short" }).slice(0,1);
-                const isToday = date === today();
-                return (
-                  <div key={date} style={{ flex:1, textAlign:"center" }}>
-                    <div style={{ fontSize:11, color: isToday ? "var(--accent)" : "var(--muted)", marginBottom:4, fontWeight: isToday?500:400 }}>{lbl}</div>
-                    <div style={{ height:32, borderRadius:6, background: done ? cat.color : "var(--surface2)", border:`0.5px solid ${done ? cat.color : "var(--border)"}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, color: done ? "#fff" : "var(--muted)" }}>
-                      {done ? "✓" : "–"}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            {streak(habit) > 0 && <div style={{ marginTop:8, fontSize:12, color:"var(--muted)" }}>🔥 {streak(habit)}-day streak</div>}
-          </div>
-        );
-      })}
-
-      {view === "manage" && habits.map(habit => {
-        const cat = catFor(habit.category);
-        return (
-          <div key={habit.id} style={{ background:"var(--surface)", borderRadius:12, border:"0.5px solid var(--border)", padding:"0.875rem 1.1rem", marginBottom:10, display:"flex", alignItems:"center", gap:12 }}>
-            <div style={{ width:10, height:10, borderRadius:"50%", background:cat.color, flexShrink:0 }} />
-            <div style={{ flex:1 }}>
-              <div style={{ fontWeight:500, fontSize:15 }}>{habit.name}</div>
-              <div style={{ fontSize:12, color:"var(--muted)", marginTop:2 }}>
-                {habit.category} · {habit.frequency}{habit.reminder ? ` · ⏰ ${habit.reminder}` : ""}
-              </div>
-            </div>
-            <button onClick={() => deleteHabit(habit.id)} style={{ border:"0.5px solid var(--danger)", color:"var(--danger-text)", borderRadius:8, padding:"5px 12px", fontSize:12, background:"transparent" }}>Remove</button>
-          </div>
-        );
-      })}
-
-      {showAdd && (
-        <Modal title="Add a new habit" onClose={() => setShowAdd(false)}>
-          <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
-            <div>
-              <label style={{ fontSize:13, color:"var(--text2)", display:"block", marginBottom:5 }}>Habit name</label>
-              <input value={form.name} onChange={e => setForm({...form, name:e.target.value})} placeholder="e.g. Morning run" onKeyDown={e => e.key==="Enter" && addHabit()} />
-            </div>
-            <div>
-              <label style={{ fontSize:13, color:"var(--text2)", display:"block", marginBottom:5 }}>Category</label>
-              <select value={form.category} onChange={e => setForm({...form, category:e.target.value})}>
-                {CATEGORIES.map(c => <option key={c.name}>{c.name}</option>)}
-              </select>
-            </div>
-            <div>
-              <label style={{ fontSize:13, color:"var(--text2)", display:"block", marginBottom:5 }}>Frequency</label>
-              <select value={form.frequency} onChange={e => setForm({...form, frequency:e.target.value})}>
-                <option value="daily">Daily</option>
-                <option value="weekly">Weekly</option>
-              </select>
-            </div>
-            <div>
-              <label style={{ fontSize:13, color:"var(--text2)", display:"block", marginBottom:5 }}>Reminder time (optional)</label>
-              <input type="time" value={form.reminder} onChange={e => setForm({...form, reminder:e.target.value})} />
-            </div>
-            <div style={{ display:"flex", gap:8, marginTop:4 }}>
-              <button onClick={() => setShowAdd(false)} style={{ flex:1 }}>Cancel</button>
-              <button onClick={addHabit} style={{ flex:1, background:"var(--accent-bg)", color:"var(--accent-text)", borderColor:"var(--accent)", fontWeight:500 }}>Add habit</button>
-            </div>
-          </div>
-        </Modal>
-      )}
-
-      {showLog && (
-        <Modal title={`Log: ${showLog.name}`} onClose={() => { setShowLog(null); setNoteInput(""); }}>
-          <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
-            <label style={{ fontSize:13, color:"var(--text2)" }}>Add a quick note (optional)</label>
-            <input value={noteInput} onChange={e => setNoteInput(e.target.value)} placeholder="e.g. Ran 5km, felt great!" onKeyDown={e => e.key==="Enter" && (toggleLog(showLog.id, today(), noteInput), setShowLog(null), setNoteInput(""))} />
-            <div style={{ display:"flex", gap:8, marginTop:4 }}>
-              <button onClick={() => { setShowLog(null); setNoteInput(""); }} style={{ flex:1 }}>Skip</button>
-              <button onClick={() => { toggleLog(showLog.id, today(), noteInput); setShowLog(null); setNoteInput(""); }} style={{ flex:1, background:"var(--success-bg)", color:"var(--success-text)", borderColor:"var(--success)", fontWeight:500 }}>
-                Mark done ✓
-              </button>
-            </div>
-          </div>
-        </Modal>
-      )}
-
-      {toast && (
-        <div style={{ position:"fixed", bottom:24, left:"50%", transform:"translateX(-50%)", background:"var(--surface)", border:"0.5px solid var(--border)", borderRadius:99, padding:"10px 22px", fontSize:14, fontWeight:500, color:"var(--text)", boxShadow:"0 4px 20px rgba(0,0,0,0.15)", whiteSpace:"nowrap", zIndex:200 }}>
-          {toast}
-        </div>
-      )}
-    </div>
-  );
-}
-
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+render();
 </script>
 </body>
 </html>
