@@ -276,7 +276,7 @@ function App() {
                 {habit.category} · {habit.frequency}{habit.reminder ? ` · ⏰ ${habit.reminder}` : ""}
               </div>
             </div>
-            <button onClick={() => deleteHabit(habit.id)} style={{ border:"0.5px solid var(--danger)", color:"var(--danger-text)", borderRadius:var(--radius), padding:"5px 12px", fontSize:12, background:"transparent" }}>Remove</button>
+            <button onClick={() => deleteHabit(habit.id)} style={{ border:"0.5px solid var(--danger)", color:"var(--danger-text)", borderRadius:8, padding:"5px 12px", fontSize:12, background:"transparent" }}>Remove</button>
           </div>
         );
       })}
